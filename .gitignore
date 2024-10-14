@@ -1,0 +1,5 @@
+node_modules/
+react-frontend/public/
+**.webm
+**.mpd
+**.mp4
