@@ -1,19 +1,27 @@
 const express = require("express")
+const cors = require("cors")
 const app = express()
 const fs = require("fs")
 const path = require("path")
 const { printValue, generateDashPlaylist } = require("./utils")
 
 const publicAssetsPath = __dirname + "/public"
-const videoPath = path.join(publicAssetsPath, "stathShort.mp4")
+const videoPath = path.join(publicAssetsPath, "sample.mp4")
 const videoSize = fs.statSync(videoPath).size
 const CHUNK_SIZE = 1_000_000
+
+app.use(cors())
+
+// app.use((_, res, next) => {
+//   res.removeHeader("Accept-Ranges")
+//   next()
+// })
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(publicAssetsPath, "index.html"))
 })
 
-app.get("/stathShort.mp4", (req, res) => {
+app.get("/sample-in-chunks", (req, res) => {
   const range = req.range(videoSize)[0]
 
   if (range === -1)  {
@@ -40,12 +48,12 @@ app.get("/stathShort.mp4", (req, res) => {
   videoStream.pipe(res)
 })
 
-app.get("/stathShort.mpd", (req, res) => {
+app.get("/stream.mpd", (req, res) => {
   res.setHeader("Content-Type", "application/dash+xml")
-  res.sendFile(path.join(publicAssetsPath, "stathShort.mpd"))
+  res.sendFile(path.join(publicAssetsPath, "stream.mpd"))
 })
 
-app.use(express.static('public'))
+app.use(express.static('public', { acceptRanges: false }))
 
 app.listen(3005, async () => {
     console.log("Listening on port 3005!")

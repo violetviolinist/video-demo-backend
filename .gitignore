@@ -1,5 +1,8 @@
 node_modules/
 react-frontend/public/
+react-frontend/build/
 **.webm
 **.mpd
 **.mp4
+public/video
+public/audio
